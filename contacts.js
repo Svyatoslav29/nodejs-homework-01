@@ -1,7 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
 const crypto = require('crypto');
-const chalk = require('chalk');
 
 const readContent = async () => {
     const content = await fs.readFile(path.join(__dirname, 'db', 'contacts.json'), 'utf-8');
@@ -15,16 +14,28 @@ const listContacts = async() => {
 
 const getContactById = async(contactId) => {
     const contacts = await readContent();
-    const [contact] = contacts.filter((contact) => contact.id === contactId);
+    const contact = contacts.find((contact) => contact.id === contactId);
     return contact
 }
 
 const removeContact = async(contactId) => {
     const contacts = await readContent();
-    const newContacts = contacts.filter((contact) => contact.id !== contactId);
+    let contactToDel 
+    const newContacts = contacts.reduce((storage, contact) => {
+        if (contact.id === contactId) {
+            contactToDel = contact
+        } else {
+            storage.push(contact);
+        }
+        return storage
+    }, [])
+    if (!contactToDel) {
+        return
+    }
     await fs.writeFile(
         path.join(__dirname, 'db', 'contacts.json'),
         JSON.stringify(newContacts, null, 2));
+    return contactToDel
 }
 
 const addContact = async (initialData) => {

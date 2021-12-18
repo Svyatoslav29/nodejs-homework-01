@@ -19,8 +19,8 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
     case 'list':
           const contacts = await listContacts()
           console.table(contacts);
-      break;
-
+          break;
+      
     case 'get':
           const contactById = await getContactById(id);
           if (contactById) {
@@ -42,8 +42,9 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
           if (contactToDel) {
               console.log(chalk.yellow('Deleted contact with id:'), id);
               console.log(contactToDel);
+          } else {
+              console.log(chalk.red('There is no contact with id:'), id)
           }
-          console.log(chalk.red('There is no contact with id:'), id);
           break;
 
     default:
